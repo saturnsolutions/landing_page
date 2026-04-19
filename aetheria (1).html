@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="description" content="EtherealOS – The next-generation glassmorphic operating system built for visionaries."/>
+<meta name="theme-color" content="#0c0e17"/>
+<title>Aetheria | EtherealOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ─── Reset & Base ─────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:#050608;
+  color:#e2e4f0;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  cursor:default;
+}
+h1,h2,h3,h4,.headline{font-family:'Syne',sans-serif}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+
+/* ─── CSS Variables ─────────────────────────────────────── */
+:root{
+  --purple:#a78bfa;
+  --purple-deep:#7c3aed;
+  --purple-glow:rgba(167,139,250,.25);
+  --cyan:#67e8f9;
+  --pink:#f472b6;
+  --surface:#0f1120;
+  --surface-2:#161929;
+  --surface-3:#1e2235;
+  --border:rgba(255,255,255,.07);
+  --border-hover:rgba(167,139,250,.35);
+  --text-muted:rgba(226,228,240,.45);
+  --text-dim:rgba(226,228,240,.65);
+  --radius-sm:8px;
+  --radius:14px;
+  --radius-lg:24px;
+  --radius-xl:36px;
+  --transition:.22s cubic-bezier(.4,0,.2,1);
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#050608}
+::-webkit-scrollbar-thumb{background:var(--purple-deep);border-radius:3px}
+
+/* ─── Selection ─────────────────────────────────────────── */
+::selection{background:rgba(124,58,237,.4);color:#fff}
+
+/* ─── Custom Cursor ─────────────────────────────────────── */
+.cursor-dot{
+  position:fixed;width:8px;height:8px;
+  background:var(--purple);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:opacity .3s,transform .1s;
+}
+.cursor-ring{
+  position:fixed;width:36px;height:36px;
+  border:1.5px solid rgba(167,139,250,.5);border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform .12s ease,width .2s,height .2s,opacity .3s;
+}
+
+/* ─── Noise Overlay ─────────────────────────────────────── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9997;opacity:.6;
+}
+
+/* ─── Animated Background Grid ─────────────────────────── */
+.bg-grid{
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(167,139,250,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(167,139,250,.04) 1px,transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;z-index:0;
+  animation:gridDrift 20s linear infinite;
+}
+@keyframes gridDrift{from{background-position:0 0}to{background-position:60px 60px}}
+
+/* ─── Glass Panel ───────────────────────────────────────── */
+.glass{
+  background:rgba(22,25,41,.55);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border:1px solid var(--border);
+}
+.glass-strong{
+  background:rgba(30,34,53,.7);
+  backdrop-filter:blur(32px) saturate(200%);
+  -webkit-backdrop-filter:blur(32px) saturate(200%);
+  border:1px solid rgba(167,139,250,.12);
+}
+
+/* ─── Gradient Text ─────────────────────────────────────── */
+.grad{
+  background:linear-gradient(135deg,#c4b5fd 0%,#a78bfa 40%,#818cf8 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.grad-hot{
+  background:linear-gradient(135deg,#f472b6 0%,#a78bfa 50%,#67e8f9 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+/* ─── Buttons ───────────────────────────────────────────── */
+.btn-primary{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:linear-gradient(135deg,#a78bfa,#7c3aed);
+  color:#fff;font-family:'Syne',sans-serif;font-weight:700;
+  padding:14px 32px;border-radius:100px;
+  box-shadow:0 0 30px rgba(124,58,237,.35),inset 0 1px 0 rgba(255,255,255,.2);
+  transition:var(--transition);position:relative;overflow:hidden;
+}
+.btn-primary::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.btn-primary:hover{
+  transform:translateY(-2px) scale(1.02);
+  box-shadow:0 0 50px rgba(124,58,237,.55),inset 0 1px 0 rgba(255,255,255,.2);
+}
+.btn-primary:hover::after{opacity:1}
+.btn-primary:active{transform:scale(.97)}
+
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  color:#e2e4f0;font-family:'Syne',sans-serif;font-weight:600;
+  padding:13px 28px;border-radius:100px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  transition:var(--transition);
+}
+.btn-ghost:hover{
+  background:rgba(167,139,250,.12);
+  border-color:rgba(167,139,250,.35);
+  transform:translateY(-1px);
+}
+
+/* ─── Navigation ────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:0 5%;
+  transition:background .3s,box-shadow .3s;
+}
+nav.scrolled{
+  background:rgba(5,6,8,.85);
+  backdrop-filter:blur(24px);
+  box-shadow:0 1px 0 rgba(255,255,255,.05),0 4px 30px rgba(0,0,0,.4);
+}
+.nav-inner{
+  max-width:1280px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  height:72px;
+}
+.nav-logo{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;
+  letter-spacing:-.03em;
+  background:linear-gradient(135deg,#c4b5fd,#7c3aed);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{
+  font-size:.85rem;font-weight:500;color:var(--text-dim);
+  padding:8px 14px;border-radius:8px;
+  transition:var(--transition);letter-spacing:.01em;
+}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-cta{display:flex;align-items:center;gap:12px}
+
+/* Hamburger */
+.hamburger{
+  display:none;flex-direction:column;gap:5px;
+  width:28px;padding:4px;
+  border-radius:6px;background:none;
+}
+.hamburger span{
+  display:block;height:2px;background:#e2e4f0;
+  border-radius:2px;transition:var(--transition);
+  transform-origin:center;
+}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* Mobile Menu */
+.mobile-menu{
+  position:fixed;top:72px;left:0;right:0;z-index:999;
+  background:rgba(9,10,16,.97);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  padding:20px 5% 28px;
+  transform:translateY(-110%);opacity:0;
+  transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .3s;
+  display:flex;flex-direction:column;gap:4px;
+}
+.mobile-menu.open{transform:translateY(0);opacity:1}
+.mobile-menu a{
+  font-size:1rem;font-weight:500;color:var(--text-dim);
+  padding:14px 16px;border-radius:10px;
+  transition:var(--transition);border:1px solid transparent;
+}
+.mobile-menu a:hover{color:#fff;background:rgba(167,139,250,.08);border-color:var(--border)}
+.mobile-menu .mobile-btn{margin-top:12px}
+
+/* ─── Hero ──────────────────────────────────────────────── */
+.hero{
+  min-height:100vh;display:flex;align-items:center;
+  position:relative;overflow:hidden;padding:120px 5% 80px;
+}
+.hero-inner{
+  max-width:1280px;margin:0 auto;width:100%;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px 6px 8px;
+  background:rgba(167,139,250,.1);
+  border:1px solid rgba(167,139,250,.25);
+  border-radius:100px;font-size:.78rem;
+  font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:#c4b5fd;margin-bottom:24px;
+}
+.hero-badge .dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--purple);
+  box-shadow:0 0 8px var(--purple);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 6px var(--purple)}50%{box-shadow:0 0 14px var(--purple),0 0 24px rgba(167,139,250,.4)}}
+
+.hero h1{
+  font-size:clamp(2.8rem,5.5vw,5.5rem);
+  font-weight:800;line-height:.92;
+  letter-spacing:-.04em;
+  margin-bottom:28px;
+}
+.hero p{
+  font-size:1.1rem;line-height:1.75;
+  color:var(--text-dim);max-width:480px;
+  margin-bottom:40px;
+}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+.hero-stats{
+  display:flex;gap:32px;margin-top:56px;
+  padding-top:40px;
+  border-top:1px solid var(--border);
+}
+.stat-item .num{
+  font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;
+  color:#fff;letter-spacing:-.03em;
+}
+.stat-item .lbl{font-size:.75rem;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+
+/* Hero Visual */
+.hero-visual{position:relative}
+.hero-card{
+  border-radius:32px;padding:3px;
+  background:linear-gradient(135deg,rgba(167,139,250,.3),rgba(124,58,237,.1),rgba(103,232,249,.2));
+  position:relative;z-index:2;
+}
+.hero-card-inner{
+  border-radius:30px;overflow:hidden;
+  background:var(--surface-3);
+  aspect-ratio:1;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.hero-card-inner img{width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;opacity:.92}
+.hero-card-inner::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 60% 30%,rgba(167,139,250,.15),transparent 60%);
+}
+
+/* Floating pills */
+.float-pill{
+  position:absolute;glass:true;
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;border-radius:100px;
+  font-size:.82rem;font-weight:600;
+  animation:floatY 4s ease-in-out infinite;
+  z-index:3;
+}
+.float-pill.pill-1{top:-16px;right:20px;animation-delay:0s}
+.float-pill.pill-2{bottom:40px;left:-20px;animation-delay:1.5s}
+.float-pill.pill-3{top:50%;right:-24px;transform:translateY(-50%);animation-delay:.8s}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.float-pill.pill-3{animation:floatY2 4s ease-in-out .8s infinite}
+@keyframes floatY2{0%,100%{transform:translateY(-50%)}50%{transform:translateY(calc(-50% - 8px))}}
+
+.pill-icon{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+}
+
+/* Glow orbs */
+.orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none}
+.orb-1{width:500px;height:500px;background:rgba(124,58,237,.18);top:-15%;left:-15%;animation:orbDrift 12s ease-in-out infinite}
+.orb-2{width:400px;height:400px;background:rgba(244,114,182,.1);bottom:-10%;right:-10%;animation:orbDrift 15s ease-in-out 3s infinite reverse}
+.orb-3{width:300px;height:300px;background:rgba(103,232,249,.08);top:40%;right:5%;animation:orbDrift 10s ease-in-out 6s infinite}
+@keyframes orbDrift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,15px) scale(.95)}}
+
+/* ─── Section Base ──────────────────────────────────────── */
+section{position:relative;z-index:1}
+.section-inner{max-width:1280px;margin:0 auto;padding:0 5%}
+.section-label{
+  display:inline-block;font-size:.72rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--purple);margin-bottom:16px;
+  background:rgba(167,139,250,.1);padding:5px 12px;border-radius:100px;
+  border:1px solid rgba(167,139,250,.2);
+}
+.section-title{
+  font-size:clamp(2rem,4vw,3.5rem);font-weight:800;
+  letter-spacing:-.04em;line-height:1.05;margin-bottom:18px;
+}
+.section-sub{font-size:1.05rem;color:var(--text-dim);line-height:1.7;max-width:520px}
+
+/* ─── About ─────────────────────────────────────────────── */
+.about{padding:120px 0}
+.about-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:24px;margin-top:72px;
+}
+.about-card{
+  padding:40px 36px;border-radius:var(--radius-lg);
+  border:1px solid var(--border);
+  background:rgba(22,25,41,.5);
+  backdrop-filter:blur(16px);
+  transition:var(--transition);position:relative;overflow:hidden;
+}
+.about-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 0% 0%,rgba(167,139,250,.08),transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.about-card:hover{border-color:var(--border-hover);transform:translateY(-4px)}
+.about-card:hover::before{opacity:1}
+.about-card:nth-child(2)::before{background:radial-gradient(circle at 0% 0%,rgba(103,232,249,.08),transparent 60%)}
+.about-card:nth-child(3)::before{background:radial-gradient(circle at 0% 0%,rgba(244,114,182,.08),transparent 60%)}
+.card-icon{
+  width:52px;height:52px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:28px;
+  background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.2);
+}
+.about-card h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;letter-spacing:-.02em}
+.about-card p{color:var(--text-dim);line-height:1.7;font-size:.95rem}
+
+/* ─── Features ──────────────────────────────────────────── */
+.features{padding:120px 0;background:linear-gradient(180deg,transparent,rgba(124,58,237,.03),transparent)}
+.features-header{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-bottom:72px;flex-wrap:wrap}
+.features-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+.feature-card{
+  border-radius:var(--radius-xl);
+  border:1px solid var(--border);
+  background:rgba(15,17,32,.8);
+  overflow:hidden;position:relative;
+  transition:var(--transition);
+}
+.feature-card:hover{border-color:rgba(167,139,250,.3);transform:translateY(-3px)}
+.feature-card-body{padding:44px}
+.feature-card-body .fi{
+  font-size:36px;margin-bottom:20px;display:block;
+}
+.feature-card-body h3{font-size:1.5rem;font-weight:700;letter-spacing:-.03em;margin-bottom:12px}
+.feature-card-body p{color:var(--text-dim);line-height:1.7}
+.feature-img{
+  height:180px;overflow:hidden;
+  border-top:1px solid var(--border);position:relative;
+}
+.feature-img img{
+  width:100%;height:100%;object-fit:cover;opacity:.55;
+  transition:transform .7s cubic-bezier(.4,0,.2,1),opacity .4s;
+}
+.feature-card:hover .feature-img img{transform:scale(1.06);opacity:.7}
+.feature-glow{
+  position:absolute;bottom:0;left:0;right:0;height:80px;
+  background:linear-gradient(transparent,rgba(15,17,32,.9));
+}
+
+/* ─── Stats ─────────────────────────────────────────────── */
+.stats-section{
+  padding:80px 0;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  background:rgba(10,11,20,.5);
+}
+.stats-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:40px;text-align:center;
+}
+.stat-big .num{
+  font-family:'Syne',sans-serif;font-size:clamp(2.5rem,6vw,5rem);
+  font-weight:800;letter-spacing:-.05em;line-height:1;
+}
+.stat-big .lbl{
+  font-size:.8rem;font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--text-muted);margin-top:8px;
+}
+
+/* ─── Security Section ──────────────────────────────────── */
+.security{padding:120px 0}
+.security-inner{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:80px;align-items:center;
+}
+.security-visual{
+  position:relative;
+}
+.sec-ring{
+  width:100%;aspect-ratio:1;max-width:420px;margin:0 auto;
+  position:relative;display:flex;align-items:center;justify-content:center;
+}
+.ring{
+  position:absolute;border-radius:50%;border:1px solid;
+  animation:spin linear infinite;
+}
+.ring-1{width:90%;height:90%;border-color:rgba(167,139,250,.15);animation-duration:25s}
+.ring-2{width:70%;height:70%;border-color:rgba(103,232,249,.12);animation-duration:18s;animation-direction:reverse}
+.ring-3{width:50%;height:50%;border-color:rgba(244,114,182,.1);animation-duration:12s}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.ring-dot{
+  position:absolute;width:8px;height:8px;border-radius:50%;
+  background:var(--purple);box-shadow:0 0 12px var(--purple);
+  top:0;left:50%;transform:translate(-50%,-50%);
+}
+.ring-2 .ring-dot{background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+.ring-3 .ring-dot{background:var(--pink);box-shadow:0 0 12px var(--pink)}
+.sec-center{
+  width:90px;height:90px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(124,58,237,.2);
+  border:2px solid rgba(167,139,250,.35);
+  font-size:32px;
+  box-shadow:0 0 40px rgba(124,58,237,.3),inset 0 0 30px rgba(167,139,250,.1);
+  z-index:2;
+}
+
+.security-badges{display:flex;flex-direction:column;gap:16px;margin-top:40px}
+.sec-badge{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 22px;border-radius:var(--radius);
+  background:rgba(22,25,41,.6);
+  border:1px solid var(--border);
+  transition:var(--transition);
+}
+.sec-badge:hover{border-color:rgba(167,139,250,.25);background:rgba(167,139,250,.06)}
+.sec-badge-icon{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.sec-badge h4{font-size:.95rem;font-weight:600;margin-bottom:3px}
+.sec-badge p{font-size:.8rem;color:var(--text-muted)}
+.sec-verified{
+  margin-left:auto;font-size:.72rem;font-weight:700;
+  background:rgba(74,222,128,.12);color:#4ade80;
+  border:1px solid rgba(74,222,128,.25);
+  padding:3px 10px;border-radius:100px;white-space:nowrap;
+}
+
+/* ─── Pricing ───────────────────────────────────────────── */
+.pricing{padding:120px 0}
+.pricing-toggle{
+  display:flex;align-items:center;gap:14px;
+  justify-content:center;margin-top:24px;margin-bottom:72px;
+}
+.toggle-label{font-size:.9rem;font-weight:500;color:var(--text-dim)}
+.toggle-label.active{color:#fff}
+.toggle-track{
+  width:52px;height:28px;border-radius:100px;
+  background:var(--surface-3);
+  border:1px solid rgba(167,139,250,.3);
+  position:relative;cursor:pointer;
+  transition:background .25s;
+}
+.toggle-track.on{background:linear-gradient(135deg,#a78bfa,#7c3aed)}
+.toggle-thumb{
+  width:20px;height:20px;border-radius:50%;
+  background:#fff;position:absolute;top:3px;left:4px;
+  transition:transform .25s;box-shadow:0 2px 6px rgba(0,0,0,.3);
+}
+.toggle-track.on .toggle-thumb{transform:translateX(24px)}
+.save-badge{
+  font-size:.7rem;font-weight:700;color:#4ade80;
+  background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.2);
+  padding:2px 8px;border-radius:100px;
+}
+
+.pricing-grid{
+  display:grid;grid-template-columns:1fr 1.1fr 1fr;
+  gap:24px;align-items:start;
+}
+.price-card{
+  border-radius:var(--radius-xl);
+  border:1px solid var(--border);
+  background:rgba(15,17,32,.8);
+  padding:40px 36px;
+  position:relative;transition:var(--transition);
+}
+.price-card:hover{border-color:rgba(167,139,250,.2);transform:translateY(-3px)}
+.price-card.featured{
+  border-color:rgba(167,139,250,.4);
+  background:rgba(30,26,60,.7);
+  padding:48px 36px;
+}
+.price-card.featured::before{
+  content:'';position:absolute;inset:-1px;border-radius:inherit;
+  background:linear-gradient(135deg,rgba(167,139,250,.4),rgba(124,58,237,.2),rgba(103,232,249,.2));
+  z-index:-1;border-radius:var(--radius-xl);
+}
+.popular-tag{
+  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,#a78bfa,#7c3aed);
+  color:#fff;font-size:.7rem;font-weight:800;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:5px 14px;border-radius:100px;white-space:nowrap;
+  box-shadow:0 4px 16px rgba(124,58,237,.4);
+}
+.price-name{font-size:1rem;font-weight:600;color:var(--text-dim);margin-bottom:16px;text-transform:uppercase;letter-spacing:.08em}
+.price-amount{
+  font-family:'Syne',sans-serif;font-size:3.2rem;font-weight:800;
+  letter-spacing:-.05em;line-height:1;margin-bottom:6px;
+}
+.price-period{font-size:.85rem;color:var(--text-muted);margin-bottom:32px}
+.price-divider{height:1px;background:var(--border);margin:28px 0}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:14px;margin-bottom:36px}
+.price-features li{
+  display:flex;align-items:center;gap:12px;
+  font-size:.9rem;color:var(--text-dim);
+}
+.price-features li.yes{color:#e2e4f0}
+.check{color:#4ade80;flex-shrink:0;font-size:16px}
+.cross{color:var(--text-muted);flex-shrink:0;font-size:16px}
+
+/* ─── Testimonials ──────────────────────────────────────── */
+.testimonials{
+  padding:120px 0;
+  background:linear-gradient(180deg,transparent,rgba(124,58,237,.03) 50%,transparent);
+}
+.testi-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:72px}
+.testi-card{
+  padding:36px;border-radius:var(--radius-lg);
+  background:rgba(22,25,41,.6);
+  border:1px solid var(--border);
+  backdrop-filter:blur(16px);
+  transition:var(--transition);
+  display:flex;flex-direction:column;
+}
+.testi-card:hover{border-color:rgba(167,139,250,.2);transform:translateY(-3px)}
+.stars{display:flex;gap:3px;margin-bottom:20px;color:#fbbf24;font-size:14px}
+.testi-quote{
+  flex:1;font-size:.95rem;line-height:1.8;
+  color:var(--text-dim);font-style:italic;margin-bottom:28px;
+}
+.testi-author{display:flex;align-items:center;gap:14px}
+.testi-avatar{
+  width:44px;height:44px;border-radius:50%;
+  object-fit:cover;border:2px solid rgba(167,139,250,.25);
+}
+.author-name{font-weight:600;font-size:.9rem}
+.author-role{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+
+/* ─── CTA ───────────────────────────────────────────────── */
+.cta-section{padding:80px 0 120px}
+.cta-card{
+  border-radius:var(--radius-xl);
+  background:rgba(22,25,41,.5);
+  border:1px solid rgba(167,139,250,.2);
+  padding:100px 60px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta-card::before{
+  content:'';position:absolute;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(124,58,237,.2),transparent 60%);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.cta-card h2{font-size:clamp(2rem,5vw,4rem);font-weight:800;letter-spacing:-.04em;margin-bottom:20px;position:relative}
+.cta-card p{font-size:1.1rem;color:var(--text-dim);max-width:480px;margin:0 auto 48px;position:relative;line-height:1.7}
+.cta-card .btn-primary{font-size:1.05rem;padding:16px 40px;position:relative}
+
+/* ─── Contact ───────────────────────────────────────────── */
+.contact{padding:120px 0}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.contact-info{padding-top:8px}
+.contact-info h2{margin-bottom:20px}
+.contact-info>p{color:var(--text-dim);line-height:1.7;margin-bottom:48px;font-size:1.05rem}
+.contact-items{display:flex;flex-direction:column;gap:20px}
+.contact-item{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 22px;border-radius:var(--radius);
+  background:rgba(22,25,41,.5);border:1px solid var(--border);
+}
+.contact-item-icon{
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);
+}
+.contact-item-lbl{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+.contact-item-val{font-weight:500;margin-top:2px}
+.social-row{display:flex;gap:12px;margin-top:36px}
+.social-btn{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(22,25,41,.6);border:1px solid var(--border);
+  font-size:18px;transition:var(--transition);color:var(--text-dim);
+}
+.social-btn:hover{border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.1);color:#fff;transform:translateY(-2px)}
+
+/* Form */
+.contact-form{
+  border-radius:var(--radius-xl);
+  background:rgba(15,17,32,.8);
+  border:1px solid var(--border);
+  padding:44px;
+}
+.form-group{margin-bottom:24px}
+.form-group label{
+  display:block;font-size:.75rem;font-weight:700;
+  letter-spacing:.09em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:10px;
+}
+.form-group input,
+.form-group textarea{
+  width:100%;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 18px;
+  color:#e2e4f0;font-family:'DM Sans',sans-serif;
+  font-size:.95rem;outline:none;
+  transition:border-color .2s,background .2s;
+  -webkit-appearance:none;
+}
+.form-group input:focus,
+.form-group textarea:focus{
+  border-color:rgba(167,139,250,.5);
+  background:rgba(167,139,250,.06);
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder{color:var(--text-muted)}
+.form-group textarea{resize:vertical;min-height:130px}
+
+/* ─── Footer ─────────────────────────────────────────────── */
+footer{
+  background:#050608;
+  border-top:1px solid var(--border);
+  padding:64px 5% 40px;
+}
+.footer-inner{max-width:1280px;margin:0 auto}
+.footer-top{
+  display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;
+  gap:60px;margin-bottom:60px;
+}
+.footer-brand .nav-logo{font-size:1.6rem;margin-bottom:16px;display:block}
+.footer-brand p{font-size:.875rem;color:var(--text-muted);line-height:1.7;max-width:260px;margin-bottom:24px}
+.footer-col h4{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e2e4f0;margin-bottom:20px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.footer-col ul li a{font-size:.875rem;color:var(--text-muted);transition:color .2s}
+.footer-col ul li a:hover{color:var(--purple)}
+.footer-bottom{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:28px;border-top:1px solid var(--border);
+  flex-wrap:wrap;gap:16px;
+}
+.footer-bottom p{font-size:.8rem;color:var(--text-muted)}
+.footer-mono{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-muted)}
+
+/* ─── Scroll Animations ─────────────────────────────────── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-scale{opacity:0;transform:scale(.96);transition:opacity .6s,transform .6s}
+.reveal-scale.visible{opacity:1;transform:scale(1)}
+
+/* Stagger delays */
+.d1{transition-delay:.05s}.d2{transition-delay:.12s}.d3{transition-delay:.2s}
+.d4{transition-delay:.28s}.d5{transition-delay:.36s}.d6{transition-delay:.44s}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media(max-width:1100px){
+  .hero-inner{grid-template-columns:1fr;gap:60px;max-width:640px;text-align:center}
+  .hero p{margin-left:auto;margin-right:auto}
+  .hero-btns{justify-content:center}
+  .hero-stats{justify-content:center}
+  .hero-visual{max-width:420px;margin:0 auto}
+  .float-pill{display:none}
+  .about-grid{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr;max-width:440px;margin:0 auto}
+  .price-card.featured{padding:40px 36px}
+  .popular-tag{position:static;transform:none;display:inline-block;margin-bottom:12px}
+  .testi-grid{grid-template-columns:1fr}
+  .security-inner{grid-template-columns:1fr;text-align:center}
+  .sec-ring{max-width:280px}
+  .security-badges{max-width:480px;margin-top:40px}
+  .contact-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr;gap:40px}
+  .features-header{flex-direction:column;align-items:flex-start}
+  .stats-grid{grid-template-columns:1fr 1fr 1fr}
+}
+@media(max-width:768px){
+  .nav-links,.nav-cta .btn-ghost{display:none}
+  .hamburger{display:flex}
+  .hero h1{font-size:clamp(2.2rem,8vw,3.5rem)}
+  .hero-stats{flex-wrap:wrap;gap:24px}
+  .about-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr;max-width:100%}
+  .testi-grid{grid-template-columns:1fr}
+  .cta-card{padding:60px 28px}
+  .contact-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr;gap:32px}
+  .footer-brand{grid-column:1/-1}
+  .stats-grid{grid-template-columns:1fr}
+  .section-inner{padding:0 4%}
+  nav{padding:0 4%}
+}
+@media(max-width:480px){
+  .hero-btns{flex-direction:column}
+  .btn-primary,.btn-ghost{width:100%;justify-content:center}
+  .footer-top{grid-template-columns:1fr}
+  .contact-form{padding:28px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- BG Grid -->
+<div class="bg-grid"></div>
+
+<!-- Glow Orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ─── Navigation ─────────────────────────────────────── -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">Aetheria</a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#security">Security</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#pricing" class="btn-ghost" style="font-size:.85rem;padding:9px 20px">View Plans</a>
+      <a href="#" class="btn-primary" style="font-size:.85rem;padding:10px 22px">Launch App</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#features" class="mobile-nav-link">Features</a>
+  <a href="#security" class="mobile-nav-link">Security</a>
+  <a href="#pricing" class="mobile-nav-link">Pricing</a>
+  <a href="#testimonials" class="mobile-nav-link">Testimonials</a>
+  <a href="#contact" class="mobile-nav-link">Contact</a>
+  <a href="#" class="btn-primary mobile-btn">Launch App →</a>
+</div>
+
+<main>
+<!-- ─── Hero ────────────────────────────────────────────── -->
+<section class="hero">
+  <!-- Hero BG Image -->
+  <div style="position:absolute;inset:0;z-index:0;overflow:hidden">
+    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1800&q=60&fit=crop" alt="" style="width:100%;height:100%;object-fit:cover;opacity:.06;filter:saturate(0)"/>
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,6,8,0) 0%,rgba(5,6,8,.8) 100%)"></div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge reveal">
+        <span class="dot"></span>
+        Next-Gen OS — Now in Beta
+      </div>
+      <h1 class="reveal d1">
+        The Chromatic<br/>
+        <span class="grad">Future of Work</span>
+      </h1>
+      <p class="reveal d2">
+        EtherealOS transcends traditional computing. A fluid, glassmorphic interface on a decentralized core — built for pure clarity and uncompromising speed.
+      </p>
+      <div class="hero-btns reveal d3">
+        <a href="#pricing" class="btn-primary">
+          <span>Get Started Free</span>
+          <span>→</span>
+        </a>
+        <button class="btn-ghost">
+          <span>▶</span> Watch Demo
+        </button>
+      </div>
+      <div class="hero-stats reveal d4">
+        <div class="stat-item">
+          <div class="num grad">1.2M+</div>
+          <div class="lbl">Active Users</div>
+        </div>
+        <div class="stat-item">
+          <div class="num" style="color:#67e8f9">99.9%</div>
+          <div class="lbl">Uptime SLA</div>
+        </div>
+        <div class="stat-item">
+          <div class="num" style="color:#f472b6">250+</div>
+          <div class="lbl">Global Nodes</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual reveal-scale d2">
+      <div class="hero-card">
+        <div class="hero-card-inner">
+          <img src="https://images.unsplash.com/photo-1635776062127-d379bfcba9f8?w=800&q=90&fit=crop" alt="EtherealOS Visualizer"/>
+        </div>
+      </div>
+      <div class="float-pill glass" style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:#4ade80; top:-16px;right:20px">
+        <div class="pill-icon" style="background:rgba(74,222,128,.15)">🔐</div>
+        <span style="font-size:.8rem;font-weight:600">AES-256 Encrypted</span>
+      </div>
+      <div class="float-pill glass" style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);color:#c4b5fd; bottom:40px;left:-20px">
+        <div class="pill-icon" style="background:rgba(167,139,250,.15)">⚡</div>
+        <span style="font-size:.8rem;font-weight:600">0.4ms Latency</span>
+      </div>
+      <div class="float-pill glass pill-3" style="background:rgba(103,232,249,.1);border:1px solid rgba(103,232,249,.25);color:#67e8f9; top:50%;right:-24px">
+        <div class="pill-icon" style="background:rgba(103,232,249,.15)">🌐</div>
+        <span style="font-size:.8rem;font-weight:600">Global CDN</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── About ────────────────────────────────────────────── -->
+<section class="about" id="about">
+  <style>
+  .about-banner{
+    width:100%;height:280px;border-radius:var(--radius-xl);
+    overflow:hidden;position:relative;margin-bottom:72px;
+  }
+  .about-banner img{width:100%;height:100%;object-fit:cover;opacity:.45;filter:saturate(1.4)}
+  .about-banner::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(90deg,rgba(5,6,8,.9) 0%,rgba(5,6,8,.2) 50%,rgba(124,58,237,.15) 100%);
+  }
+  .about-banner-text{
+    position:absolute;inset:0;display:flex;align-items:center;
+    padding:0 52px;z-index:2;
+  }
+  .about-banner-text p{
+    font-family:'Syne',sans-serif;font-size:clamp(1.1rem,2.5vw,1.7rem);
+    font-weight:700;max-width:560px;line-height:1.4;
+    color:rgba(255,255,255,.9);
+  }
+  @media(max-width:600px){.about-banner{height:200px}.about-banner-text{padding:0 28px}}
+  </style>
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:16px">
+      <span class="section-label reveal">About Aetheria</span>
+    </div>
+    <div style="text-align:center">
+      <h2 class="section-title reveal d1">Redefining the <span class="grad">Invisible Infrastructure</span></h2>
+      <p class="section-sub reveal d2" style="margin:0 auto">We don't just build software — we architect the digital atmosphere where your most ambitious ideas breathe and thrive.</p>
+    </div>
+
+    <!-- About Banner -->
+    <div class="about-banner reveal d2" style="margin-top:52px">
+      <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1400&q=80&fit=crop" alt="Aetheria infrastructure"/>
+      <div class="about-banner-text">
+        <p>"We don't build software. We architect the digital atmosphere where the future lives."</p>
+      </div>
+    </div>
+    <div class="about-grid">
+      <div class="about-card reveal d1">
+        <div class="card-icon">🚀</div>
+        <h3>Mission</h3>
+        <p>To accelerate the transition to fluid computing by merging aesthetic elegance with uncompromising performance, one kernel at a time.</p>
+      </div>
+      <div class="about-card reveal d2">
+        <div class="card-icon" style="background:rgba(103,232,249,.12);border-color:rgba(103,232,249,.2)">👁</div>
+        <h3>Vision</h3>
+        <p>A world where operating systems are invisible, intuitive, and respond to the human spirit as much as the human hand.</p>
+      </div>
+      <div class="about-card reveal d3">
+        <div class="card-icon" style="background:rgba(244,114,182,.12);border-color:rgba(244,114,182,.2)">✦</div>
+        <h3>Values</h3>
+        <p>Radical transparency, sensory-first design, and the belief that speed is the ultimate feature for every modern visionary.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Features ─────────────────────────────────────────── -->
+<section class="features" id="features">
+  <div class="section-inner">
+    <div class="features-header">
+      <div>
+        <span class="section-label reveal">Core Features</span>
+        <h2 class="section-title reveal d1">Engineered for <span class="grad">the Elite</span></h2>
+        <p class="section-sub reveal d2">Every pixel powered by a custom-built kernel designed for zero-latency interactions and breathtaking visuals.</p>
+      </div>
+      <div style="font-family:'Syne',sans-serif;font-size:5rem;font-weight:800;color:rgba(255,255,255,.04);line-height:1;letter-spacing:-.05em;user-select:none" class="reveal">CORE V4</div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal d1">
+        <div class="feature-card-body">
+          <span class="fi">◈</span>
+          <h3>Dynamic Layering</h3>
+          <p>Automatically organizes your workspace based on cognitive load, surfacing exactly what you need when you need it.</p>
+        </div>
+        <div class="feature-img">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&fit=crop" alt="Dynamic Layering"/>
+          <div class="feature-glow"></div>
+        </div>
+      </div>
+      <div class="feature-card reveal d2">
+        <div class="feature-card-body">
+          <span class="fi" style="color:#67e8f9">◐</span>
+          <h3>Chromatic Fluidity</h3>
+          <p>Adapts its color palette in real-time to match your environment's lighting, reducing eye strain and enhancing focus.</p>
+        </div>
+        <div class="feature-img">
+          <img src="https://images.unsplash.com/photo-1550859492-d5da9d8e45f3?w=800&q=80&fit=crop" alt="Chromatic Fluidity"/>
+          <div class="feature-glow"></div>
+        </div>
+      </div>
+      <div class="feature-card reveal d3">
+        <div class="feature-card-body">
+          <span class="fi" style="color:#f472b6">⬡</span>
+          <h3>Secure Synthesis</h3>
+          <p>Quantum-resistant encryption layers that wrap around every file, ensuring your data remains yours and only yours.</p>
+        </div>
+        <div class="feature-img">
+          <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80&fit=crop" alt="Secure Synthesis"/>
+          <div class="feature-glow"></div>
+        </div>
+      </div>
+      <div class="feature-card reveal d4">
+        <div class="feature-card-body">
+          <span class="fi" style="color:#c4b5fd">⬢</span>
+          <h3>Edge Computing</h3>
+          <p>Distributes computational heavy-lifting across a global network of nodes, making your local device feel infinite.</p>
+        </div>
+        <div class="feature-img">
+          <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80&fit=crop" alt="Edge Computing"/>
+          <div class="feature-glow"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Stats ─────────────────────────────────────────────── -->
+<section class="stats-section">
+  <div class="section-inner">
+    <div class="stats-grid">
+      <div class="stat-big reveal d1" style="text-align:center">
+        <div class="num grad">1.2M+</div>
+        <div class="lbl">Active Users Worldwide</div>
+      </div>
+      <div class="stat-big reveal d2" style="text-align:center">
+        <div class="num" style="color:#67e8f9">99.9%</div>
+        <div class="lbl">Guaranteed Uptime</div>
+      </div>
+      <div class="stat-big reveal d3" style="text-align:center">
+        <div class="num" style="color:#f472b6">250+</div>
+        <div class="lbl">Global Edge Nodes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Security Section ─────────────────────────────────── -->
+<section class="security" id="security">
+  <div class="section-inner">
+    <div class="security-inner">
+      <div>
+        <span class="section-label reveal">Enterprise Security</span>
+        <h2 class="section-title reveal d1">Built Secure <span class="grad">From the Core</span></h2>
+        <p class="section-sub reveal d2" style="margin-bottom:40px">Every layer of EtherealOS is hardened against modern threats. From quantum-resistant encryption to zero-trust architecture, your data never sleeps unguarded.</p>
+        <div class="security-badges">
+          <div class="sec-badge reveal d1">
+            <div class="sec-badge-icon" style="background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.2)">🔐</div>
+            <div>
+              <h4>AES-256 + Post-Quantum Encryption</h4>
+              <p>Every file encrypted at rest and in transit</p>
+            </div>
+            <span class="sec-verified">VERIFIED</span>
+          </div>
+          <div class="sec-badge reveal d2">
+            <div class="sec-badge-icon" style="background:rgba(103,232,249,.12);border:1px solid rgba(103,232,249,.2)">🛡</div>
+            <div>
+              <h4>Zero-Trust Architecture</h4>
+              <p>Every access request verified independently</p>
+            </div>
+            <span class="sec-verified">CERTIFIED</span>
+          </div>
+          <div class="sec-badge reveal d3">
+            <div class="sec-badge-icon" style="background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.2)">🔍</div>
+            <div>
+              <h4>SOC 2 Type II Compliant</h4>
+              <p>Independently audited annually</p>
+            </div>
+            <span class="sec-verified">AUDITED</span>
+          </div>
+          <div class="sec-badge reveal d4">
+            <div class="sec-badge-icon" style="background:rgba(244,114,182,.12);border:1px solid rgba(244,114,182,.2)">🌐</div>
+            <div>
+              <h4>GDPR & CCPA Compliant</h4>
+              <p>Full data sovereignty and portability</p>
+            </div>
+            <span class="sec-verified">COMPLIANT</span>
+          </div>
+        </div>
+      </div>
+      <div class="security-visual reveal-scale">
+        <div class="sec-ring" style="position:relative">
+          <!-- background glow image -->
+          <div style="position:absolute;inset:0;border-radius:50%;overflow:hidden;z-index:0">
+            <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=600&q=70&fit=crop" alt="" style="width:100%;height:100%;object-fit:cover;opacity:.18;filter:saturate(1.8) hue-rotate(200deg)"/>
+          </div>
+          <div class="ring ring-1"><div class="ring-dot"></div></div>
+          <div class="ring ring-2"><div class="ring-dot"></div></div>
+          <div class="ring ring-3"><div class="ring-dot"></div></div>
+          <div class="sec-center">🔒</div>
+        </div>
+        <p style="text-align:center;font-size:.8rem;color:var(--text-muted);margin-top:20px;font-family:'DM Mono',monospace">SECURE CORE v4.1 • ACTIVE</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Pricing ───────────────────────────────────────────── -->
+<section class="pricing" id="pricing">
+  <div class="section-inner">
+    <div style="text-align:center">
+      <span class="section-label reveal">Pricing</span>
+      <h2 class="section-title reveal d1">Simple &amp; <span class="grad">Transparent</span></h2>
+      <p class="section-sub reveal d2" style="margin:0 auto">No hidden fees. No lock-in. Cancel anytime.</p>
+    </div>
+    <div class="pricing-toggle reveal d3">
+      <span class="toggle-label" id="monthlyLabel">Monthly</span>
+      <div class="toggle-track" id="billingToggle" onclick="toggleBilling()">
+        <div class="toggle-thumb"></div>
+      </div>
+      <span class="toggle-label active" id="yearlyLabel">Yearly <span class="save-badge">SAVE 20%</span></span>
+    </div>
+    <div class="pricing-grid">
+      <!-- Basic -->
+      <div class="price-card reveal d1">
+        <p class="price-name">Basic</p>
+        <div class="price-amount" id="basic-price">$0</div>
+        <p class="price-period">Free forever, no card required</p>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li class="yes"><span class="check">✓</span> Single Device License</li>
+          <li class="yes"><span class="check">✓</span> Standard Cloud Node</li>
+          <li class="yes"><span class="check">✓</span> Community Support</li>
+          <li><span class="cross">✕</span> Quantum Encryption</li>
+          <li><span class="cross">✕</span> Priority Support</li>
+        </ul>
+        <a href="#" class="btn-ghost" style="width:100%;justify-content:center;font-size:.9rem;padding:13px 24px">Get Started Free</a>
+      </div>
+      <!-- Pro -->
+      <div class="price-card featured reveal d2">
+        <span class="popular-tag">Most Popular</span>
+        <p class="price-name">Pro</p>
+        <div class="price-amount grad" id="pro-price">$23</div>
+        <p class="price-period" id="pro-period">per month, billed annually</p>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li class="yes"><span class="check">✓</span> Up to 5 Devices</li>
+          <li class="yes"><span class="check">✓</span> Dedicated Edge Node</li>
+          <li class="yes"><span class="check">✓</span> Quantum Encryption</li>
+          <li class="yes"><span class="check">✓</span> Priority Support</li>
+          <li class="yes"><span class="check">✓</span> Advanced Analytics</li>
+        </ul>
+        <a href="#" class="btn-primary" style="width:100%;justify-content:center;font-size:.95rem">Upgrade to Pro →</a>
+      </div>
+      <!-- Premium -->
+      <div class="price-card reveal d3">
+        <p class="price-name">Enterprise</p>
+        <div class="price-amount" id="premium-price">$79</div>
+        <p class="price-period" id="premium-period">per month, billed annually</p>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li class="yes"><span class="check">✓</span> Unlimited Devices</li>
+          <li class="yes"><span class="check">✓</span> Private Cluster Access</li>
+          <li class="yes"><span class="check">✓</span> 24/7 Concierge Dev</li>
+          <li class="yes"><span class="check">✓</span> Custom SLA</li>
+          <li class="yes"><span class="check">✓</span> White-label Option</li>
+        </ul>
+        <a href="#contact" class="btn-ghost" style="width:100%;justify-content:center;font-size:.9rem;padding:13px 24px">Contact Sales →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Testimonials ──────────────────────────────────────── -->
+<section class="testimonials" id="testimonials">
+  <div class="section-inner">
+    <div style="text-align:center">
+      <span class="section-label reveal">Testimonials</span>
+      <h2 class="section-title reveal d1">Trusted by <span class="grad">Visionaries</span></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal d1">
+        <div class="stars">★★★★★</div>
+        <p class="testi-quote">"EtherealOS isn't just an OS — it's a productivity enhancer that feels like it's reading my mind. The fluidity is unmatched in anything I've used before."</p>
+        <div class="testi-author">
+          <img class="testi-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face&q=80" alt="Marcus Chen"/>
+          <div>
+            <div class="author-name">Marcus Chen</div>
+            <div class="author-role">Founder, Nova Labs</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal d2">
+        <div class="stars">★★★★★</div>
+        <p class="testi-quote">"The glassmorphic design system is a masterpiece. It's the first time I've genuinely enjoyed looking at a file system — every interaction feels intentional."</p>
+        <div class="testi-author">
+          <img class="testi-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face&q=80" alt="Elena Rodriguez"/>
+          <div>
+            <div class="author-name">Elena Rodriguez</div>
+            <div class="author-role">Design Director, Chroma</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal d3">
+        <div class="stars">★★★★★</div>
+        <p class="testi-quote">"World-class security infrastructure. Running edge computations globally with near-zero latency was the game-changer my team needed to ship 3x faster."</p>
+        <div class="testi-author">
+          <img class="testi-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face&q=80" alt="Julian Vane"/>
+          <div>
+            <div class="author-name">Julian Vane</div>
+            <div class="author-role">CTO, Zenith Systems</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ───────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="section-inner">
+    <div class="cta-card reveal">
+      <!-- CTA bg image -->
+      <div style="position:absolute;inset:0;border-radius:inherit;overflow:hidden;z-index:0">
+        <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1400&q=60&fit=crop" alt="" style="width:100%;height:100%;object-fit:cover;opacity:.06;filter:saturate(0)"/>
+      </div>
+      <h2>Ready to <span class="grad-hot">Transcend?</span></h2>
+      <p>Join thousands of visionaries who have already stepped into the future of computing. Your first 30 days are on us.</p>
+      <a href="#pricing" class="btn-primary">
+        Claim Your Free License →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Contact ───────────────────────────────────────────── -->
+<section class="contact" id="contact">
+  <div class="section-inner">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <span class="section-label reveal">Contact</span>
+        <h2 class="section-title reveal d1">Get in <span class="grad">Touch</span></h2>
+        <p class="reveal d2">Have questions about EtherealOS? Our team of architectural specialists is here to guide your transition to fluid computing.</p>
+        <div class="contact-items">
+          <div class="contact-item reveal d3">
+            <div class="contact-item-icon">✉</div>
+            <div>
+              <div class="contact-item-lbl">Email Us</div>
+              <div class="contact-item-val">hello@aetheria.io</div>
+            </div>
+          </div>
+          <div class="contact-item reveal d4">
+            <div class="contact-item-icon">📍</div>
+            <div>
+              <div class="contact-item-lbl">Headquarters</div>
+              <div class="contact-item-val">Neo-San Francisco, Cloud District</div>
+            </div>
+          </div>
+        </div>
+        <div class="social-row reveal d5">
+          <a href="#" class="social-btn" title="Twitter/X">𝕏</a>
+          <a href="#" class="social-btn" title="LinkedIn">in</a>
+          <a href="#" class="social-btn" title="GitHub">⌥</a>
+          <a href="#" class="social-btn" title="Discord">◈</a>
+        </div>
+      </div>
+      <div class="contact-form reveal d2">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="John Visionary" autocomplete="name"/>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="john@ethereal.os" autocomplete="email"/>
+        </div>
+        <div class="form-group">
+          <label for="company">Company (Optional)</label>
+          <input type="text" id="company" placeholder="Nova Labs" autocomplete="organization"/>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" placeholder="How can we help you transcend?"></textarea>
+        </div>
+        <button type="button" class="btn-primary" style="width:100%;justify-content:center;font-size:.95rem;padding:16px" onclick="handleFormSubmit(this)">
+          Send Message →
+        </button>
+        <p style="font-size:.75rem;color:var(--text-muted);margin-top:16px;text-align:center;line-height:1.6">
+          🔒 Your data is protected under our <a href="#" style="color:var(--purple);text-decoration:underline">Privacy Policy</a>. We never share your information.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ─── Footer ────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="nav-logo">Aetheria</span>
+        <p>Engineered for the ethereal. Building the future of fluid computing, one kernel at a time.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span style="font-size:.7rem;background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);padding:3px 10px;border-radius:100px;font-weight:600">SOC 2 Type II</span>
+          <span style="font-size:.7rem;background:rgba(103,232,249,.1);color:#67e8f9;border:1px solid rgba(103,232,249,.2);padding:3px 10px;border-radius:100px;font-weight:600">ISO 27001</span>
+          <span style="font-size:.7rem;background:rgba(167,139,250,.1);color:#c4b5fd;border:1px solid rgba(167,139,250,.2);padding:3px 10px;border-radius:100px;font-weight:600">GDPR</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#security">Security</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#">Changelog</a></li>
+          <li><a href="#">Roadmap</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press Kit</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Security Policy</a></li>
+          <li><a href="#">DPA</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Aetheria Labs, Inc. All rights reserved.</p>
+      <span class="footer-mono">CORE V4.1.0 — STABLE</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ─── Custom Cursor ───────────────────────────────────────── */
+const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  dot.style.left=mx+'px';dot.style.top=my+'px';
+});
+function animateCursor(){
+  rx+=(mx-rx)*.12;ry+=(my-ry)*.12;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+document.querySelectorAll('a,button,.price-card,.testi-card,.about-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='52px';ring.style.height='52px';ring.style.borderColor='rgba(167,139,250,.7)'});
+  el.addEventListener('mouseleave',()=>{ring.style.width='36px';ring.style.height='36px';ring.style.borderColor='rgba(167,139,250,.5)'});
+});
+/* hide on mobile */
+if('ontouchstart' in window){dot.style.display='none';ring.style.display='none'}
+
+/* ─── Scroll Nav ──────────────────────────────────────────── */
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',window.scrollY>50);
+},{ passive:true });
+
+/* ─── Hamburger ───────────────────────────────────────────── */
+const ham = document.getElementById('hamburger');
+const mob = document.getElementById('mobileMenu');
+ham.addEventListener('click',()=>{
+  ham.classList.toggle('open');
+  mob.classList.toggle('open');
+  document.body.style.overflow = mob.classList.contains('open') ? 'hidden' : '';
+});
+document.querySelectorAll('.mobile-nav-link,.mobile-btn').forEach(a=>{
+  a.addEventListener('click',()=>{
+    ham.classList.remove('open');mob.classList.remove('open');
+    document.body.style.overflow='';
+  });
+});
+
+/* ─── Scroll Reveal ───────────────────────────────────────── */
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}});
+},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal,.reveal-scale').forEach(el=>observer.observe(el));
+
+/* ─── Billing Toggle ──────────────────────────────────────── */
+let isYearly = true;
+function toggleBilling(){
+  isYearly = !isYearly;
+  const track = document.getElementById('billingToggle');
+  track.classList.toggle('on', isYearly);
+  document.getElementById('monthlyLabel').classList.toggle('active', !isYearly);
+  document.getElementById('yearlyLabel').classList.toggle('active', isYearly);
+
+  if(isYearly){
+    document.getElementById('pro-price').textContent='$23';
+    document.getElementById('pro-period').textContent='per month, billed annually';
+    document.getElementById('premium-price').textContent='$79';
+    document.getElementById('premium-period').textContent='per month, billed annually';
+  } else {
+    document.getElementById('pro-price').textContent='$29';
+    document.getElementById('pro-period').textContent='per month, billed monthly';
+    document.getElementById('premium-price').textContent='$99';
+    document.getElementById('premium-period').textContent='per month, billed monthly';
+  }
+}
+// init state
+document.getElementById('billingToggle').classList.add('on');
+
+/* ─── Form Submit ─────────────────────────────────────────── */
+function handleFormSubmit(btn){
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const msg = document.getElementById('message').value.trim();
+  if(!name||!email||!msg){
+    btn.textContent='Please fill all required fields';
+    btn.style.background='rgba(244,114,182,.3)';
+    setTimeout(()=>{btn.textContent='Send Message →';btn.style.background=''},2000);
+    return;
+  }
+  const orig = btn.textContent;
+  btn.textContent='Sending…';btn.disabled=true;
+  setTimeout(()=>{
+    btn.textContent='✓ Message Sent!';
+    btn.style.background='linear-gradient(135deg,#4ade80,#22c55e)';
+    document.getElementById('name').value='';
+    document.getElementById('email').value='';
+    document.getElementById('company').value='';
+    document.getElementById('message').value='';
+    setTimeout(()=>{btn.textContent=orig;btn.style.background='';btn.disabled=false},3000);
+  },1200);
+}
+
+/* ─── Smooth Scroll ───────────────────────────────────────── */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const id=a.getAttribute('href');
+    if(id==='#')return;
+    const el=document.querySelector(id);
+    if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth',block:'start'})}
+  });
+});
+
+/* ─── Subtle Parallax on Hero ─────────────────────────────── */
+window.addEventListener('scroll',()=>{
+  const y = window.scrollY;
+  const orb1 = document.querySelector('.orb-1');
+  const orb2 = document.querySelector('.orb-2');
+  if(orb1) orb1.style.transform=`translate(${y*.05}px,${y*.08}px)`;
+  if(orb2) orb2.style.transform=`translate(${-y*.04}px,${-y*.06}px)`;
+},{ passive:true });
+</script>
+</body>
+</html>
